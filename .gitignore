@@ -1,0 +1,25 @@
+# ── CRITICAL: API keys and secrets ────────────────────────────────────────────
+.env
+*.env
+.env.*
+!.env.example          # allow the template, never the real one
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
