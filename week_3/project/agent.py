@@ -24,16 +24,26 @@ from tools.files import read_file, write_file, edit_file, list_files, set_worksp
 load_dotenv()
 
 # ── Config ─────────────────────────────────────────────────────────────────────
-_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
-_API_KEY = os.getenv("GEMINI_API_KEY", "")
-MODEL = os.getenv("MODEL", "gemini-2.5-flash-lite")
 MAX_ITERATIONS = 15
 
 _HERE = Path(__file__).parent
 SESSIONS_DIR = _HERE / ".agent" / "sessions"
 WORKSPACE_ROOT = _HERE / "notes"
 
-client = OpenAI(api_key=_API_KEY, base_url=_BASE_URL)
+# Support OpenRouter (primary) or Gemini (fallback for local dev)
+_OPENROUTER_KEY = os.getenv("OPENROUTER_API_KEY", "")
+_GEMINI_KEY = os.getenv("GEMINI_API_KEY", "")
+
+if _OPENROUTER_KEY:
+    client = OpenAI(api_key=_OPENROUTER_KEY, base_url="https://openrouter.ai/api/v1")
+    MODEL = os.getenv("MODEL", "deepseek/deepseek-v4-flash:free")
+elif _GEMINI_KEY:
+    client = OpenAI(api_key=_GEMINI_KEY, base_url="https://generativelanguage.googleapis.com/v1beta/openai/")
+    MODEL = os.getenv("MODEL", "gemini-2.5-flash-lite")
+else:
+    print("[ERROR] No API key found. Set OPENROUTER_API_KEY or GEMINI_API_KEY in .env")
+    sys.exit(1)
+
 set_workspace(WORKSPACE_ROOT)
 
 # ── Tool schemas (OpenAI function-calling format) ──────────────────────────────
